@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart_Quiz</string>
+    <string name="ms_not_found">見つかりませんでした</string>
+    <string name="sing_in">サインイン</string>
+    <string name="start">START</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_home_title">ホーム</string>
+    <string name="nav_quiz_title">クイズ</string>
+    <string name="nav_edit_title">編集</string>
+</resources>
