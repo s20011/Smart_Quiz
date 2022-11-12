@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">Smart_Quiz</string>
     <string name="ms_not_found">NOT FOUND</string>
-    <string name="sing_in">Sing In</string>
+    <string name="sign_in">Sign In</string>
     <string name="start">START</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="nav_home_title">HOME</string>
     <string name="nav_quiz_title">Quiz</string>
     <string name="nav_edit_title">Edit</string>
+    <string name="tx_user_name">Name：</string>
+    <string name="tx_user_email">E-mail：</string>
+    <string name="sign_out">Sign out</string>
 </resources>

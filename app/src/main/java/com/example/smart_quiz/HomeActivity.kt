@@ -14,6 +14,7 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         //下部メニューコンポーネントの取得
         val bottomNavView: BottomNavigationView = binding.bottomNavBar
         //ナビゲーションフラグメント取得
