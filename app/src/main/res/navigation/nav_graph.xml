@@ -15,10 +15,23 @@
         android:id="@+id/nav_menu_quiz_field"
         android:name="com.example.smart_quiz.ui.quiz.QuizFieldFragment"
         android:label="fragment_quiz_field"
-        tools:layout="@layout/fragment_quiz_field" />
+        tools:layout="@layout/fragment_quiz_field" >
+
+        <action
+            android:id="@+id/action_field_to_select"
+            app:destination="@+id/quizSelectFragment"/>
+    </fragment>
+
     <fragment
         android:id="@+id/nav_menu_edit"
         android:name="com.example.smart_quiz.ui.edit.EditFragment"
         android:label="fragment_edit"
         tools:layout="@layout/fragment_edit" />
+    <fragment
+        android:id="@+id/quizSelectFragment"
+        android:name="com.example.smart_quiz.ui.quiz.QuizSelectFragment"
+        android:label="fragment_quiz_select"
+        tools:layout="@layout/fragment_quiz_select" />
+
+
 </navigation>
