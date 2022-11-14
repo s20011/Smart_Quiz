@@ -5,11 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.quiz.QuizSelectFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/tx_id"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/selectRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:text="Hello Select Fragment" />
-
+        android:layout_height="match_parent" />
 </FrameLayout>

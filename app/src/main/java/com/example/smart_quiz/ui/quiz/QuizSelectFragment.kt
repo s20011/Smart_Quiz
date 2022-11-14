@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smart_quiz.R
 import com.example.smart_quiz.databinding.FragmentQuizSelectBinding
+import com.example.smart_quiz.model.Detail
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,6 +31,13 @@ class QuizSelectFragment : Fragment() {
 
     private val binding get() = _binding!!
 
+    private val sampleList: MutableList<Detail> = mutableListOf(
+        Detail(title = "samplequiz1", LikeNum = 3, q_id = "01"),
+        Detail(title = "samplequiz2", LikeNum =4 , q_id = "02"),
+        Detail(title = "samplequiz4", LikeNum = 7, q_id = "03"),
+        Detail(title = "samplequiz5", LikeNum = 2, q_id = "04")
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -44,7 +53,13 @@ class QuizSelectFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentQuizSelectBinding.inflate(inflater, container, false)
 
-        binding.txId.text = arguments?.getString("id")
+        val field_id = arguments?.getString("id")
+
+        val recyclerView = binding.selectRecyclerView
+        recyclerView.let {
+            it.adapter = SelectAdapter(sampleList)
+            it.layoutManager = LinearLayoutManager(view?.context)
+        }
 
         return binding.root
     }
