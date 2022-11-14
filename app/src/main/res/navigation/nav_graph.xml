@@ -31,7 +31,9 @@
         android:id="@+id/quizSelectFragment"
         android:name="com.example.smart_quiz.ui.quiz.QuizSelectFragment"
         android:label="fragment_quiz_select"
-        tools:layout="@layout/fragment_quiz_select" />
+        tools:layout="@layout/fragment_quiz_select" >
+
+    </fragment>
 
 
 </navigation>

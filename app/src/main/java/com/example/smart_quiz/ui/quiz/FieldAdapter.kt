@@ -8,6 +8,8 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.R
 import com.example.smart_quiz.model.Field
@@ -39,7 +41,8 @@ class FieldAdapter(private val FieldList: MutableList<Field>, private val fragme
             override fun onClick(v: View?) {
                 val activity = v!!.context as AppCompatActivity
                 Toast.makeText(v.context, "TEST$field_id", Toast.LENGTH_LONG).show()
-                //findNavController(fragment).navigate(R.id.action_field_to_select)
+                val bundle = bundleOf("id" to field_id)
+                findNavController(fragment).navigate(R.id.action_field_to_select, bundle)
 
             }
         })

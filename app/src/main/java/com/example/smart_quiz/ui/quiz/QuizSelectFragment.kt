@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.smart_quiz.R
 import com.example.smart_quiz.databinding.FragmentQuizSelectBinding
 
@@ -25,6 +26,7 @@ class QuizSelectFragment : Fragment() {
     private var param2: String? = null
     private var _binding: FragmentQuizSelectBinding? = null
 
+
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +43,8 @@ class QuizSelectFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentQuizSelectBinding.inflate(inflater, container, false)
+
+        binding.txId.text = arguments?.getString("id")
 
         return binding.root
     }
