@@ -89,6 +89,7 @@ class HomeFragment : Fragment() {
 
         binding.btSignin.setOnClickListener {
             //サインインボタンが押されたときサインインする
+            Log.d("GoogleSignInActivity", "START =======")
             signIn()
         }
 

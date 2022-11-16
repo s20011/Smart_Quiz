@@ -1,16 +1,22 @@
 package com.example.smart_quiz.ui.quiz
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.smart_quiz.R
+import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.databinding.FragmentQuizSelectBinding
 import com.example.smart_quiz.model.Detail
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.selects.select
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +32,11 @@ class QuizSelectFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var field_id: String? = null
     private var _binding: FragmentQuizSelectBinding? = null
+    private val details: MutableList<Detail> = mutableListOf()
+    private var recyclerView: RecyclerView? = null
+    private var selectAdapter: SelectAdapter? = null
 
 
     private val binding get() = _binding!!
@@ -38,12 +48,22 @@ class QuizSelectFragment : Fragment() {
         Detail(title = "samplequiz5", LikeNum = 2, q_id = "04")
     )
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        field_id = arguments?.getString("id")
+        reader(field_id)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+            //field_id = it.getString("id")
         }
+
+
     }
 
     override fun onCreateView(
@@ -52,16 +72,57 @@ class QuizSelectFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentQuizSelectBinding.inflate(inflater, container, false)
+        Log.d("QuizSelectFragment", "Start onCreateView")
 
-        val field_id = arguments?.getString("id")
 
-        val recyclerView = binding.selectRecyclerView
+
+        recyclerView = binding.selectRecyclerView
+        selectAdapter = SelectAdapter(sampleList)
+
+
         recyclerView.let {
-            it.adapter = SelectAdapter(sampleList)
+            it!!.adapter = selectAdapter
             it.layoutManager = LinearLayoutManager(view?.context)
+            it.itemAnimator?.changeDuration = 0
         }
 
+
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    fun reader(field: String?){
+        val database = Firebase.database.reference
+        database.child("Details").child(field!!)
+            .addValueEventListener(object: ValueEventListener {
+                override fun onDataChange(datasnapshot: DataSnapshot){
+                    for(data in datasnapshot.children){
+                        val item = data.getValue(Detail::class.java)
+                        details.add(
+                            Detail(title = item!!.title.toString(),
+                                LikeNum = item.LikeNum.toInt(),
+                                q_id = item.q_id.toString()
+                            )
+                        )
+                        Log.d("QuizSelectFragment", "==> $item")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    //データの取得に失敗したとき
+                    Log.d("QuizSelectFragment", "ELLOR")
+                    details.add(
+                        Detail(title = "Not Found", LikeNum = 0, q_id = "not_found")
+                    )
+                }
+            })
     }
 
     companion object {
@@ -80,6 +141,7 @@ class QuizSelectFragment : Fragment() {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
+
                 }
             }
     }

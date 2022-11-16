@@ -1,7 +1,7 @@
 package com.example.smart_quiz.model
 
 data class Detail(
-    val title: String,
-    val LikeNum: Int,
-    val q_id: String
+    val LikeNum: Int = 0,
+    val q_id: String = "",
+    val title: String = ""
     )
