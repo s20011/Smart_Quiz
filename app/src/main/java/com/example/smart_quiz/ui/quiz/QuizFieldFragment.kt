@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -53,11 +56,22 @@ class QuizFieldFragment : Fragment() {
         _binding = FragmentQuizFieldBinding.inflate(inflater, container, false)
 
         val recyclerview = binding.fieldRecyclerview
-        val adapter = FieldAdapter(fieldList, this@QuizFieldFragment)
+        val adapter = FieldAdapter(fieldList)
+        adapter.itemClickListener = object : FieldAdapter.OnItemClickListener {
+            override fun onItemClick(holder: FieldAdapter.ViewHolder) {
+                val field_id = fieldList[holder.absoluteAdapterPosition].id
+                Toast.makeText(context, "TEST$field_id", Toast.LENGTH_LONG).show()
+                val bundle = bundleOf("id" to field_id)
+
+                findNavController().navigate(R.id.action_field_to_select, bundle)
+
+            }
+        }
+
 
         recyclerview.let {
             //adapterをセット
-            it.adapter = FieldAdapter(fieldList, this@QuizFieldFragment)
+            it.adapter = adapter
             //layoutManagerをセット
             it.layoutManager = LinearLayoutManager(view?.context)
             //枠線を追加

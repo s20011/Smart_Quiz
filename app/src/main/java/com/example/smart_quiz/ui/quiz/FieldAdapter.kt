@@ -15,7 +15,7 @@ import com.example.smart_quiz.R
 import com.example.smart_quiz.model.Field
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 
-class FieldAdapter(private val FieldList: MutableList<Field>, private val fragment: QuizFieldFragment)
+class FieldAdapter(private val FieldList: MutableList<Field>)
     : RecyclerView.Adapter<FieldAdapter.ViewHolder>(){
 
         inner class ViewHolder(ListItemView: View): RecyclerView.ViewHolder(ListItemView){
@@ -27,6 +27,10 @@ class FieldAdapter(private val FieldList: MutableList<Field>, private val fragme
             .inflate(R.layout.field_row, parent, false)
 
         val holder = ViewHolder(view)
+        //クリック処理
+        view.setOnClickListener {
+            itemClickListener?.onItemClick(holder)
+        }
 
         return holder
     }
@@ -34,18 +38,6 @@ class FieldAdapter(private val FieldList: MutableList<Field>, private val fragme
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Log.d("FieldAdapter", "===>$FieldList")
         holder.field_name.text = FieldList[position].name
-        //ItemのId
-        val field_id = FieldList[position].id
-
-        holder.itemView.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                val activity = v!!.context as AppCompatActivity
-                Toast.makeText(v.context, "TEST$field_id", Toast.LENGTH_LONG).show()
-                val bundle = bundleOf("id" to field_id)
-                findNavController(fragment).navigate(R.id.action_field_to_select, bundle)
-
-            }
-        })
 
     }
 

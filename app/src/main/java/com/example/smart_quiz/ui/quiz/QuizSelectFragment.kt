@@ -1,14 +1,17 @@
 package com.example.smart_quiz.ui.quiz
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.smart_quiz.GameActivity
 import com.example.smart_quiz.databinding.FragmentQuizSelectBinding
 import com.example.smart_quiz.model.Detail
 import com.google.firebase.database.DataSnapshot
@@ -36,7 +39,7 @@ class QuizSelectFragment : Fragment() {
     private var _binding: FragmentQuizSelectBinding? = null
     private val details: MutableList<Detail> = mutableListOf()
     private var recyclerView: RecyclerView? = null
-    private var selectAdapter: SelectAdapter? = null
+    private lateinit var selectAdapter: SelectAdapter
 
 
     private val binding get() = _binding!!
@@ -50,9 +53,12 @@ class QuizSelectFragment : Fragment() {
 
 
     override fun onAttach(context: Context) {
-        super.onAttach(context)
         field_id = arguments?.getString("id")
         reader(field_id)
+        super.onAttach(context)
+        Log.d("QuizSelectFragment", "Start onAttach")
+
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +84,17 @@ class QuizSelectFragment : Fragment() {
 
         recyclerView = binding.selectRecyclerView
         selectAdapter = SelectAdapter(sampleList)
+        selectAdapter.itemClickListener = object : SelectAdapter.OnItemClickListener {
+            override fun onItemClick(holder: SelectAdapter.ViewHolder) {
+                val position = holder.absoluteAdapterPosition
+                val text = holder.title.text
+                val id = sampleList[position]
+                Toast.makeText(context, "TEST $text" + id, Toast.LENGTH_LONG).show()
+                val intent = Intent(context, GameActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
 
 
         recyclerView.let {
@@ -99,6 +116,7 @@ class QuizSelectFragment : Fragment() {
     }
 
     fun reader(field: String?){
+        Log.d("QuizSelectFragment", "Start reader")
         val database = Firebase.database.reference
         database.child("Details").child(field!!)
             .addValueEventListener(object: ValueEventListener {
@@ -123,6 +141,7 @@ class QuizSelectFragment : Fragment() {
                     )
                 }
             })
+        Log.d("QuizSelectFragment", "Finish reader")
     }
 
     companion object {
