@@ -1,15 +1,11 @@
-package com.example.smart_quiz.ui.quiz
+package com.example.smart_quiz.adapter
 
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.smart_quiz.GameActivity
 import com.example.smart_quiz.R
 import com.example.smart_quiz.model.Detail
 

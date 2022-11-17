@@ -7,12 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.R
+import com.example.smart_quiz.adapter.FieldAdapter
 import com.example.smart_quiz.databinding.FragmentQuizFieldBinding
 import com.example.smart_quiz.model.Field
 

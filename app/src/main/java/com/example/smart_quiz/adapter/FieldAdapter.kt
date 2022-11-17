@@ -1,19 +1,13 @@
-package com.example.smart_quiz.ui.quiz
+package com.example.smart_quiz.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.R
 import com.example.smart_quiz.model.Field
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 
 class FieldAdapter(private val FieldList: MutableList<Field>)
     : RecyclerView.Adapter<FieldAdapter.ViewHolder>(){
