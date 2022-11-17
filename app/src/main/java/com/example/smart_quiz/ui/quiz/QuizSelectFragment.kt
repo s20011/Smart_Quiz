@@ -16,6 +16,7 @@ import com.example.smart_quiz.databinding.FragmentQuizSelectBinding
 import com.example.smart_quiz.model.Detail
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -37,7 +38,7 @@ class QuizSelectFragment : Fragment() {
     private var param2: String? = null
     private var field_id: String? = null
     private var _binding: FragmentQuizSelectBinding? = null
-    private val details: MutableList<Detail> = mutableListOf()
+    private lateinit var details: MutableList<Detail>
     private var recyclerView: RecyclerView? = null
     private lateinit var selectAdapter: SelectAdapter
 
@@ -54,7 +55,7 @@ class QuizSelectFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         field_id = arguments?.getString("id")
-        reader(field_id)
+        details = reader(field_id)
         super.onAttach(context)
         Log.d("QuizSelectFragment", "Start onAttach")
 
@@ -83,7 +84,7 @@ class QuizSelectFragment : Fragment() {
 
 
         recyclerView = binding.selectRecyclerView
-        selectAdapter = SelectAdapter(sampleList)
+        selectAdapter = SelectAdapter(details)
         selectAdapter.itemClickListener = object : SelectAdapter.OnItemClickListener {
             override fun onItemClick(holder: SelectAdapter.ViewHolder) {
                 val position = holder.absoluteAdapterPosition
@@ -103,7 +104,6 @@ class QuizSelectFragment : Fragment() {
             it.itemAnimator?.changeDuration = 0
         }
 
-
         return binding.root
     }
 
@@ -115,34 +115,42 @@ class QuizSelectFragment : Fragment() {
         super.onStart()
     }
 
-    fun reader(field: String?){
+    fun reader(field: String?):MutableList<Detail>{
         Log.d("QuizSelectFragment", "Start reader")
-        val database = Firebase.database.reference
+        val database = FirebaseDatabase.getInstance().reference
+        val list: MutableList<Detail> = mutableListOf()
         database.child("Details").child(field!!)
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(datasnapshot: DataSnapshot){
                     for(data in datasnapshot.children){
                         val item = data.getValue(Detail::class.java)
-                        details.add(
+                        list.add(
                             Detail(title = item!!.title.toString(),
                                 LikeNum = item.LikeNum.toInt(),
                                 q_id = item.q_id.toString()
                             )
                         )
+
+                        //recyclerviewの更新
+                        binding.selectRecyclerView.adapter?.notifyItemInserted(list.size - 1)
                         Log.d("QuizSelectFragment", "==> $item")
                     }
+                    Log.d("QuizSelectFragment", "Finish onDataChange")
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     //データの取得に失敗したとき
                     Log.d("QuizSelectFragment", "ELLOR")
-                    details.add(
+                    list.add(
                         Detail(title = "Not Found", LikeNum = 0, q_id = "not_found")
                     )
                 }
             })
         Log.d("QuizSelectFragment", "Finish reader")
+        return list
     }
+
+
 
     companion object {
         /**
