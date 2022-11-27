@@ -4,6 +4,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.adapter.ChoiceAdapter
@@ -52,21 +53,17 @@ class GameActivity : AppCompatActivity() {
 
         binding.btNext.setOnClickListener {
             quizCount++
-            gameStart()
+            Alert()
         }
-
-        //if(quizCount + 1 == sampleQuizList.size) binding.btNext.isClickable = false
-
 
     }
 
     //問題ごとにviewを更新する
-    fun gameStart() {
+    fun gameStart(): Boolean {
         correct.clear()
         userSelect.clear()
         choices.clear()
 
-        if(quizCount + 1 == sampleQuizList.size) finish()
         binding.txCount.text = "${quizCount + 1}"
         binding.txSentence.text = sampleQuizList[quizCount].sentence
         correct.add(sampleQuizList[quizCount].correct)
@@ -110,13 +107,46 @@ class GameActivity : AppCompatActivity() {
         }
 
 
-
+        Log.d("GameActivity", "quizCount == $quizCount")
+        return true
 
 
 
     }
 
     fun Alert() {
+        var corNum = 0
 
+        //正解が不正解
+        for(i in correct){
+            if(i in userSelect){
+                corNum++
+            }
+        }
+
+        val message = if(corNum == userSelect.size){
+                "正解　◎"
+            }else {
+                "不正解　✕"
+            }
+
+        //Dialogの表示
+        if(quizCount  == sampleQuizList.size){
+            AlertDialog.Builder(this@GameActivity)
+                .setTitle("結果")
+                .setMessage(message)
+                .setPositiveButton("結果画面") { _, _ ->
+                    finish()
+                }
+                .show()
+        }else {
+            AlertDialog.Builder(this@GameActivity)
+                .setTitle("結果")
+                .setMessage(message)
+                .setPositiveButton("次へ") { _, _ ->
+                    gameStart()
+                }
+                .show()
+        }
     }
 }
