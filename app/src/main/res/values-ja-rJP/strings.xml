@@ -12,4 +12,5 @@
     <string name="tx_user_email">E-mail：</string>
     <string name="sign_out">Sign out</string>
     <string name="count">No</string>
+    <string name="total">得点：</string>
 </resources>
