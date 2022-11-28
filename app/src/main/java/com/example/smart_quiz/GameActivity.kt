@@ -23,6 +23,7 @@ class GameActivity : AppCompatActivity() {
     val choices = mutableListOf<String>()
     val result = mutableListOf<String>() // 問題の結果
     private lateinit var recyclerView: RecyclerView
+    private lateinit var QuizList: MutableList<Quiz>
 
     //sample
     private val sampleQuizList: MutableList<Quiz> = mutableListOf(
@@ -54,7 +55,7 @@ class GameActivity : AppCompatActivity() {
         setContentView(binding.root)
         val id = intent.getStringExtra("ID").toString()
         reader(id)
-        gameStart()
+        //gameStart()
 
         binding.btNext.setOnClickListener {
             quizCount++
@@ -65,19 +66,20 @@ class GameActivity : AppCompatActivity() {
 
     //問題ごとにviewを更新する
     fun gameStart(): Boolean {
+        Log.d("GameActivity", "Start Game")
         correct.clear()
         userSelect.clear()
         choices.clear()
 
         binding.txCount.text = "${quizCount + 1}"
-        binding.txSentence.text = sampleQuizList[quizCount].sentence
-        correct.add(sampleQuizList[quizCount].correct)
+        binding.txSentence.text = QuizList[quizCount].sentence
+        correct.add(QuizList[quizCount].correct)
 
         choices.let {
-            it.add(sampleQuizList[quizCount].choice1)
-            it.add(sampleQuizList[quizCount].choice2)
-            it.add(sampleQuizList[quizCount].choice3)
-            it.add(sampleQuizList[quizCount].correct)
+            it.add(QuizList[quizCount].choice1)
+            it.add(QuizList[quizCount].choice2)
+            it.add(QuizList[quizCount].choice3)
+            it.add(QuizList[quizCount].correct)
             it.shuffle()
         }
 
@@ -136,7 +138,7 @@ class GameActivity : AppCompatActivity() {
             }
 
         //Dialogの表示
-        if(quizCount  == sampleQuizList.size){
+        if(quizCount  == QuizList.size){
             AlertDialog.Builder(this@GameActivity)
                 .setTitle("結果")
                 .setMessage(message)
@@ -155,7 +157,7 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    private fun reader(id: String): MutableList<Quiz>{
+    private fun reader(id: String){
         Log.d("GameActivity", "Start reader")
         val database = FirebaseDatabase.getInstance().reference
         val list: MutableList<Quiz> = mutableListOf()
@@ -172,6 +174,9 @@ class GameActivity : AppCompatActivity() {
                             sentence = item.sentence)
                         )
                     }
+                    Log.d("GameActivity", "Finish reader")
+                    QuizList = list
+                    gameStart()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -183,7 +188,7 @@ class GameActivity : AppCompatActivity() {
                     )
                 }
             })
-        Log.d("GameActivity", "Finish reader")
-        return list
+
+
     }
 }
