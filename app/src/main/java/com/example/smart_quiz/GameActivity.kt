@@ -1,5 +1,6 @@
 package com.example.smart_quiz
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,7 +22,7 @@ class GameActivity : AppCompatActivity() {
     var correct = mutableListOf<String>() //クイズの正解
     val userSelect = mutableListOf<String>() //userが選択した選択肢
     val choices = mutableListOf<String>()
-    val result = mutableListOf<String>() // 問題の結果
+    val result = arrayListOf<Int>() // 問題の結果
     private lateinit var recyclerView: RecyclerView
     private lateinit var QuizList: MutableList<Quiz>
 
@@ -61,7 +62,6 @@ class GameActivity : AppCompatActivity() {
             quizCount++
             Alert()
         }
-
     }
 
     //問題ごとにviewを更新する
@@ -131,29 +131,40 @@ class GameActivity : AppCompatActivity() {
             }
         }
 
-        val message = if(corNum == userSelect.size){
-                "正解　◎"
-            }else {
-                "不正解　✕"
-            }
+        var message: String
+        if(corNum == userSelect.size){
+            message = "正解　◎"
+            result.add(3)
+        }else {
+            message = "不正解　✕"
+            result.add(0)
+        }
 
         //Dialogの表示
         if(quizCount  == QuizList.size){
-            AlertDialog.Builder(this@GameActivity)
-                .setTitle("結果")
+            val builder = AlertDialog.Builder(this@GameActivity)
+            builder.setTitle("結果")
                 .setMessage(message)
                 .setPositiveButton("結果画面") { _, _ ->
-                    finish()
+                    val intent = Intent(this@GameActivity, ResActivity::class.java)
+                    intent.putIntegerArrayListExtra("Result", result)
+                    startActivity(intent)
                 }
-                .show()
+            val alertDialog: AlertDialog = builder.create()
+            alertDialog.setCanceledOnTouchOutside(false)
+            alertDialog.show()
+
+
         }else {
-            AlertDialog.Builder(this@GameActivity)
-                .setTitle("結果")
+            val builder = AlertDialog.Builder(this@GameActivity)
+            builder.setTitle("結果")
                 .setMessage(message)
                 .setPositiveButton("次へ") { _, _ ->
                     gameStart()
                 }
-                .show()
+            val alertDialog: AlertDialog = builder.create()
+            alertDialog.setCanceledOnTouchOutside(false)
+            alertDialog.show()
         }
     }
 
@@ -188,7 +199,8 @@ class GameActivity : AppCompatActivity() {
                     )
                 }
             })
-
-
     }
+
+
+
 }
