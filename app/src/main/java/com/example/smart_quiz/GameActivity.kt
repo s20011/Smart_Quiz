@@ -10,6 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.adapter.ChoiceAdapter
 import com.example.smart_quiz.databinding.ActivityGameBinding
 import com.example.smart_quiz.model.Quiz
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class GameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGameBinding
@@ -48,7 +52,8 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        val id = intent.getStringExtra("ID").toString()
+        reader(id)
         gameStart()
 
         binding.btNext.setOnClickListener {
@@ -148,5 +153,37 @@ class GameActivity : AppCompatActivity() {
                 }
                 .show()
         }
+    }
+
+    private fun reader(id: String): MutableList<Quiz>{
+        Log.d("GameActivity", "Start reader")
+        val database = FirebaseDatabase.getInstance().reference
+        val list: MutableList<Quiz> = mutableListOf()
+        database.child("question").child(id)
+            .addValueEventListener(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for(data in snapshot.children){
+                        val item = data.getValue(Quiz::class.java)
+                        list.add(
+                            Quiz(choice1 = item!!.choice1,
+                            choice2 = item.choice2,
+                            choice3 = item.choice3,
+                            correct = item.correct,
+                            sentence = item.sentence)
+                        )
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("GameActivity", "ERROR")
+                    list.add(
+                        Quiz(choice1= "Not Found", choice2 = "Not Found",
+                        choice3 = "Not Found", correct = "Not Found",
+                        sentence = "Not Found")
+                    )
+                }
+            })
+        Log.d("GameActivity", "Finish reader")
+        return list
     }
 }

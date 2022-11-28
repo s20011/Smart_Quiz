@@ -87,9 +87,10 @@ class QuizSelectFragment : Fragment() {
             override fun onItemClick(holder: SelectAdapter.ViewHolder) {
                 val position = holder.absoluteAdapterPosition
                 val text = holder.title.text
-                val id = sampleList[position]
+                val id = details[position].q_id
                 Toast.makeText(context, "TEST $text" + id, Toast.LENGTH_LONG).show()
                 val intent = Intent(context, GameActivity::class.java)
+                intent.putExtra("ID", id)
                 startActivity(intent)
             }
         }
@@ -113,7 +114,7 @@ class QuizSelectFragment : Fragment() {
         super.onStart()
     }
 
-    fun reader(field: String?):MutableList<Detail>{
+    private fun reader(field: String?):MutableList<Detail>{
         Log.d("QuizSelectFragment", "Start reader")
         val database = FirebaseDatabase.getInstance().reference
         val list: MutableList<Detail> = mutableListOf()
@@ -123,9 +124,9 @@ class QuizSelectFragment : Fragment() {
                     for(data in datasnapshot.children){
                         val item = data.getValue(Detail::class.java)
                         list.add(
-                            Detail(title = item!!.title.toString(),
-                                LikeNum = item.LikeNum.toInt(),
-                                q_id = item.q_id.toString()
+                            Detail(title = item!!.title,
+                                LikeNum = item.LikeNum,
+                                q_id = item.q_id
                             )
                         )
 
@@ -138,7 +139,7 @@ class QuizSelectFragment : Fragment() {
 
                 override fun onCancelled(error: DatabaseError) {
                     //データの取得に失敗したとき
-                    Log.d("QuizSelectFragment", "ELLOR")
+                    Log.d("QuizSelectFragment", "ERROR")
                     list.add(
                         Detail(title = "Not Found", LikeNum = 0, q_id = "not_found")
                     )
