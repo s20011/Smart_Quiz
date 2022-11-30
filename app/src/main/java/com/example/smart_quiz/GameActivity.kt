@@ -27,6 +27,7 @@ class GameActivity : AppCompatActivity() {
     private lateinit var QuizList: MutableList<Quiz>
 
     //sample
+    /*
     private val sampleQuizList: MutableList<Quiz> = mutableListOf(
         Quiz(
             choice1 = "1kalskfj", choice2 = "1gasda", choice3 = "1asgasji", correct = "1asfaatas",
@@ -48,7 +49,7 @@ class GameActivity : AppCompatActivity() {
             choice1 = "5sdklasdlf", choice2 = "5sdassaf", choice3 = "5asfda", correct = "5sfagas",
             sentence = "5lllllllllasaal"
         )
-    )
+    )*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,6 +150,7 @@ class GameActivity : AppCompatActivity() {
                     val intent = Intent(this@GameActivity, ResActivity::class.java)
                     intent.putIntegerArrayListExtra("Result", result)
                     startActivity(intent)
+                    finish()
                 }
             val alertDialog: AlertDialog = builder.create()
             alertDialog.setCanceledOnTouchOutside(false)

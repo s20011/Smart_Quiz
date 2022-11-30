@@ -13,4 +13,6 @@
     <string name="sign_out">Sign out</string>
     <string name="count">No</string>
     <string name="total">得点：</string>
+    <string name="finish">終了</string>
+    <string name="add">追加</string>
 </resources>

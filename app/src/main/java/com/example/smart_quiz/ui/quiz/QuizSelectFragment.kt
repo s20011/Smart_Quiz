@@ -43,6 +43,7 @@ class QuizSelectFragment : Fragment() {
 
     private val binding get() = _binding!!
 
+    //
     private val sampleList: MutableList<Detail> = mutableListOf(
         Detail(title = "samplequiz1", LikeNum = 3, q_id = "01"),
         Detail(title = "samplequiz2", LikeNum =4 , q_id = "02"),

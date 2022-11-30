@@ -31,6 +31,10 @@ class ResActivity : AppCompatActivity() {
             }
         }
 
+        binding.btFinish.setOnClickListener {
+            finish()
+        }
+
         recyclerView = binding.resRecyclerview
         val adapter = ResAdapter(strRes)
 

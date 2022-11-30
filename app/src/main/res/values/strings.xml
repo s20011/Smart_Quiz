@@ -12,4 +12,6 @@
     <string name="sign_out">Sign out</string>
     <string name="count">No</string>
     <string name="total">Total：</string>
+    <string name="finish">Finish</string>
+    <string name="add">Add</string>
 </resources>

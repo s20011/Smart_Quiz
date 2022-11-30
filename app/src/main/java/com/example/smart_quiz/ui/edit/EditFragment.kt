@@ -1,11 +1,19 @@
 package com.example.smart_quiz.ui.edit
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.R
+import com.example.smart_quiz.adapter.SelectAdapter
+import com.example.smart_quiz.databinding.FragmentEditBinding
+import com.example.smart_quiz.model.Detail
+import com.google.android.material.snackbar.Snackbar
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +29,19 @@ class EditFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var _binding: FragmentEditBinding? = null
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var selectAdapter: SelectAdapter
+
+    //sample
+    private val sampleList: MutableList<Detail> = mutableListOf(
+        Detail(title = "samplequiz1", LikeNum = 3, q_id = "01"),
+        Detail(title = "samplequiz2", LikeNum =4 , q_id = "02"),
+        Detail(title = "samplequiz4", LikeNum = 7, q_id = "03"),
+        Detail(title = "samplequiz5", LikeNum = 2, q_id = "04")
+    )
+
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +56,30 @@ class EditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit, container, false)
+        _binding = FragmentEditBinding.inflate(inflater, container, false)
+
+        recyclerView = binding.editSelectRecyclerview
+        selectAdapter = SelectAdapter(sampleList)
+        //recyclerviewのクリック処理
+        selectAdapter.itemClickListener = object :SelectAdapter.OnItemClickListener{
+            override fun onItemClick(holder: SelectAdapter.ViewHolder) {
+                val position = holder.absoluteAdapterPosition
+                Snackbar.make(requireView(), "onClick position $position", Snackbar.LENGTH_SHORT)
+                Log.d("EditFragment", "onClick")
+            }
+        }
+
+        recyclerView.let {
+            it.adapter = selectAdapter
+            it.layoutManager = LinearLayoutManager(view?.context)
+            it.itemAnimator?.changeDuration = 0
+        }
+
+        binding.fabAdd.setOnClickListener{
+            Log.d("EditFragment", "onClick fab")
+        }
+
+        return binding.root
     }
 
     companion object {
