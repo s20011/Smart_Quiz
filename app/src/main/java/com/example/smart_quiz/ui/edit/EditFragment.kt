@@ -1,5 +1,6 @@
 package com.example.smart_quiz.ui.edit
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.smart_quiz.EditActivity
 import com.example.smart_quiz.R
 import com.example.smart_quiz.adapter.SelectAdapter
 import com.example.smart_quiz.databinding.FragmentEditBinding
@@ -77,6 +79,8 @@ class EditFragment : Fragment() {
 
         binding.fabAdd.setOnClickListener{
             Log.d("EditFragment", "onClick fab")
+            val intent = Intent(context, EditActivity::class.java)
+            startActivity(intent)
         }
 
         return binding.root
