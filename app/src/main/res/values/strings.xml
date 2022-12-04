@@ -14,4 +14,12 @@
     <string name="total">Total：</string>
     <string name="finish">Finish</string>
     <string name="add">Add</string>
+    <string name="question">question</string>
+    <string name="correct">correct</string>
+    <string name="choice1">choice1</string>
+    <string name="choice2">choice2</string>
+    <string name="choice3">choice3</string>
+    <string name="ms_ed_question">Please fill in the problem statement</string>
+    <string name="ms_ed_correct">Pleace fill in the correct answer choices</string>
+    <string name="ms_ed_choice">Please fill in the options other than the correct answer</string>
 </resources>

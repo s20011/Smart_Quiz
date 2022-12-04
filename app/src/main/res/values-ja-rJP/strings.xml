@@ -15,4 +15,12 @@
     <string name="total">得点：</string>
     <string name="finish">終了</string>
     <string name="add">追加</string>
+    <string name="question">問題</string>
+    <string name="correct">正解</string>
+    <string name="choice1">選択肢１</string>
+    <string name="choice2">選択肢２</string>
+    <string name="choice3">選択肢３</string>
+    <string name="ms_ed_question">問題文を記入してください</string>
+    <string name="ms_ed_correct">正解の選択肢を記入してください</string>
+    <string name="ms_ed_choice">正解以外の選択肢を記入してください</string>
 </resources>
