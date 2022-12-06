@@ -21,7 +21,9 @@ class CreateDialogFragment:DialogFragment() {
                 dialogClickListener?.onDialogClick(createDialog)
             }
 
-        return builder.create()
+        val alertDialog = builder.create()
+        alertDialog.setCanceledOnTouchOutside(false)
+        return alertDialog
     }
 
     var dialogClickListener: OnDialogClickListener? = null

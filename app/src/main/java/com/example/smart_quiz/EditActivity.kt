@@ -1,5 +1,6 @@
 package com.example.smart_quiz
 
+import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,10 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.adapter.ChoiceAdapter
 import com.example.smart_quiz.databinding.ActivityEditBinding
+import com.example.smart_quiz.model.Detail
 import com.example.smart_quiz.model.Field
 import com.example.smart_quiz.model.Quiz
 import com.example.smart_quiz.ui.edit.CreateDialogFragment
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.database.FirebaseDatabase
 
 class EditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditBinding
@@ -48,6 +51,7 @@ class EditActivity : AppCompatActivity() {
             it.itemAnimator?.changeDuration = 0
         }
 
+        //スピナーの初期化
         val spinner = binding.spField
         val adapter = ArrayAdapter(this,
             android.R.layout.simple_spinner_item,
@@ -71,9 +75,25 @@ class EditActivity : AppCompatActivity() {
             showDialog()
         }
 
+        binding.btCancel.setOnClickListener {
+            val builder = AlertDialog.Builder(this@EditActivity)
+            builder.setTitle("キャンセル")
+                .setMessage("作成をやめますか")
+                .setPositiveButton("はい") { _, _ ->
+                    finish()
+                }
+            val alertDialog = builder.create()
+            alertDialog.show()
+        }
+
+        binding.btCreation.setOnClickListener {
+            createQuiz()
+        }
+
 
     }
 
+    //制作画面のダイアログ表示
     private fun showDialog() {
         val createDialog = CreateDialogFragment()
         createDialog.dialogClickListener = object : CreateDialogFragment.OnDialogClickListener {
@@ -107,7 +127,34 @@ class EditActivity : AppCompatActivity() {
             }
         }
 
+
         createDialog.show(supportFragmentManager, "create_dialog")
+
+    }
+
+    //RealtimeDatabaseへの書き込み
+    private fun createQuiz() {
+        //Firebaseのインスタンス取得
+        val database = FirebaseDatabase.getInstance()
+        //questionを参照
+        val refQuestion = database.getReference("question")
+        //一意のキーを取得
+        val newPostRef = refQuestion.push()
+        //RealtimeDatabase -> questionへの書き込み
+        createQuizList.forEach { newPostRef.push().setValue(it) }
+
+        val key = newPostRef.key
+
+        //Detailを分野別に参照
+        val refDetail = database.getReference("Details/${fieldList[position!!].id}")
+        //RealtimeDatabase -> Detailへの書き込み
+        refDetail.push().setValue(
+            Detail(
+                LikeNum = 0,
+                q_id = key.toString(),
+                title = binding.edTitle.text.toString()
+            )
+        )
 
     }
 }
