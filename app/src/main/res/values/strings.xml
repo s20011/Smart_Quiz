@@ -22,4 +22,8 @@
     <string name="ms_ed_question">Please fill in the problem statement</string>
     <string name="ms_ed_correct">Pleace fill in the correct answer choices</string>
     <string name="ms_ed_choice">Please fill in the options other than the correct answer</string>
+    <string name="title">Title</string>
+    <string name="field">Field：</string>
+    <string name="ms_spinner">Please select</string>
+    <string name="creation">Creation</string>
 </resources>

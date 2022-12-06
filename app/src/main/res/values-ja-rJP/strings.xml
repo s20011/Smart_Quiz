@@ -23,4 +23,8 @@
     <string name="ms_ed_question">問題文を記入してください</string>
     <string name="ms_ed_correct">正解の選択肢を記入してください</string>
     <string name="ms_ed_choice">正解以外の選択肢を記入してください</string>
+    <string name="title">タイトル</string>
+    <string name="field">分野：</string>
+    <string name="ms_spinner">選択してください</string>
+    <string name="creation">作成</string>
 </resources>
