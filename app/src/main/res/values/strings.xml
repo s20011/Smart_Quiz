@@ -26,4 +26,5 @@
     <string name="field">Field：</string>
     <string name="ms_spinner">Please select</string>
     <string name="creation">Creation</string>
+    <string name="cancel">Cancel</string>
 </resources>
