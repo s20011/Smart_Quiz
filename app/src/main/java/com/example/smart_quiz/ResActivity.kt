@@ -26,6 +26,7 @@ class ResActivity : AppCompatActivity() {
     private lateinit var rankRecyclerView: RecyclerView
     private val rankInfoList = mutableListOf<RankInfo>()
 
+
     private val sampleList: MutableList<Rank> = mutableListOf(
         Rank(name = "test-user" , point = 100),
         Rank(name = "test-user2" , point = 90),
@@ -91,38 +92,46 @@ class ResActivity : AppCompatActivity() {
     }
 
     private fun createRankList(){
-        val database = Firebase.database.getReference("Ranking")
+        val refRank = Firebase.database.getReference("Ranking")
+        val refUser = Firebase.database.getReference("users")
 
-        database.orderByChild("point").startAt(1.0).limitToLast(10)
+        refRank.orderByChild("point").startAt(1.0).limitToLast(10)
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     Log.d("ResActivity", "Start onDataChange")
                     Log.d("ResActivity", "${snapshot.children}")
 
                     for(data in snapshot.children){
+                        val userId = data.child("u_id").getValue(String::class.java)
+                        Log.d("ResActivity", "userId = ${userId.toString()}")
+                        val point = data.child("point").getValue(Int::class.java)
+                        refUser.child(userId.toString())
+                            .addListenerForSingleValueEvent(object: ValueEventListener{
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    val userName = snapshot.child("name")
+                                        .getValue(String::class.java)
+                                    Log.d("ResActivity", "userName = ${userName.toString()}")
+                                    rankList.add(
+                                        Rank(
+                                            name = userName.toString(),
+                                            point = point!!.toInt()
+                                        )
+                                    )
+                                    Log.d("ResActivity", "$rankList")
+                                }
 
-//                        val item = data.child("point").getValue(Int::class.java)
-//                        itemList.add(item!!)
-                        val item = data.getValue(RankInfo::class.java)
-                        rankInfoList.add(
-                            RankInfo(
-                                d_id = item!!.d_id,
-                                point = item.point,
-                                u_id = item.u_id
-                            )
-                        )
-
-
+                                override fun onCancelled(error: DatabaseError) {
+                                    Log.d("ResActivity", "ERROR")
+                                }
+                            })
                     }
-                    Log.d("ResActivity", "RankInfo => $rankInfoList")
                     Log.d("ResActivity", "Finish onDataChange")
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.d("QuizSelectFragment", "ERROR")
+                    Log.d("ResActivity", "ERROR")
                 }
             })
     }
-
 
 }
