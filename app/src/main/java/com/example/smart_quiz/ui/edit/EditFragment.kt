@@ -37,10 +37,10 @@ class EditFragment : Fragment() {
 
     //sample
     private val sampleList: MutableList<Detail> = mutableListOf(
-        Detail(title = "samplequiz1", LikeNum = 3, q_id = "01"),
-        Detail(title = "samplequiz2", LikeNum =4 , q_id = "02"),
-        Detail(title = "samplequiz4", LikeNum = 7, q_id = "03"),
-        Detail(title = "samplequiz5", LikeNum = 2, q_id = "04")
+        Detail(title = "samplequiz1", likeNum = 3, q_id = "01"),
+        Detail(title = "samplequiz2", likeNum =4 , q_id = "02"),
+        Detail(title = "samplequiz4", likeNum = 7, q_id = "03"),
+        Detail(title = "samplequiz5", likeNum = 2, q_id = "04")
     )
 
     private val binding get() = _binding!!

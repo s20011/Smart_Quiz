@@ -19,6 +19,7 @@ import com.example.smart_quiz.model.Quiz
 import com.example.smart_quiz.ui.edit.CreateDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.database.FirebaseDatabase
+import org.jetbrains.annotations.NotNull
 
 class EditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditBinding
@@ -150,7 +151,7 @@ class EditActivity : AppCompatActivity() {
         //RealtimeDatabase -> Detailへの書き込み
         refDetail.push().setValue(
             Detail(
-                LikeNum = 0,
+                likeNum = 0,
                 q_id = key.toString(),
                 title = binding.edTitle.text.toString()
             )

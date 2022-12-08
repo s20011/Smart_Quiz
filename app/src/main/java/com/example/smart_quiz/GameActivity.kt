@@ -25,6 +25,8 @@ class GameActivity : AppCompatActivity() {
     val result = arrayListOf<Int>() // 問題の結果
     private lateinit var recyclerView: RecyclerView
     private lateinit var QuizList: MutableList<Quiz>
+    private lateinit var field_id: String
+    private lateinit var dId: String
 
     //sample
     /*
@@ -56,6 +58,9 @@ class GameActivity : AppCompatActivity() {
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val id = intent.getStringExtra("ID").toString()
+        field_id = intent.getStringExtra("field_id").toString()
+        dId = intent.getStringExtra("d_id").toString()
+
         reader(id)
         //gameStart()
 
@@ -149,6 +154,8 @@ class GameActivity : AppCompatActivity() {
                 .setPositiveButton("結果画面") { _, _ ->
                     val intent = Intent(this@GameActivity, ResActivity::class.java)
                     intent.putIntegerArrayListExtra("Result", result)
+                    intent.putExtra("fieldId", field_id)
+                    intent.putExtra("d_Id", dId)
                     startActivity(intent)
                     finish()
                 }

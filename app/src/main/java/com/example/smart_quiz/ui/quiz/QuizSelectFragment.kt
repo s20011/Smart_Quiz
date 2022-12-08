@@ -35,20 +35,22 @@ class QuizSelectFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var field_id: String? = null
+    private val dIdList: MutableList<String> = mutableListOf()
     private var _binding: FragmentQuizSelectBinding? = null
     private lateinit var details: MutableList<Detail>
     private var recyclerView: RecyclerView? = null
     private lateinit var selectAdapter: SelectAdapter
 
 
+
     private val binding get() = _binding!!
 
     //
     private val sampleList: MutableList<Detail> = mutableListOf(
-        Detail(title = "samplequiz1", LikeNum = 3, q_id = "01"),
-        Detail(title = "samplequiz2", LikeNum =4 , q_id = "02"),
-        Detail(title = "samplequiz4", LikeNum = 7, q_id = "03"),
-        Detail(title = "samplequiz5", LikeNum = 2, q_id = "04")
+        Detail(title = "samplequiz1", likeNum = 3, q_id = "01"),
+        Detail(title = "samplequiz2", likeNum =4 , q_id = "02"),
+        Detail(title = "samplequiz4", likeNum = 7, q_id = "03"),
+        Detail(title = "samplequiz5", likeNum = 2, q_id = "04")
     )
 
 
@@ -92,6 +94,8 @@ class QuizSelectFragment : Fragment() {
                 Toast.makeText(context, "TEST $text" + id, Toast.LENGTH_LONG).show()
                 val intent = Intent(context, GameActivity::class.java)
                 intent.putExtra("ID", id)
+                intent.putExtra("field_id", field_id)
+                intent.putExtra("d_id",dIdList[position])
                 startActivity(intent)
             }
         }
@@ -123,17 +127,25 @@ class QuizSelectFragment : Fragment() {
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(datasnapshot: DataSnapshot){
                     for(data in datasnapshot.children){
-                        val item = data.getValue(Detail::class.java)
+                        val title = data.child("title").getValue(String::class.java)
+                        val likeNum = data.child("likeNum").getValue(Int::class.java)
+                        val q_id = data.child("q_id").getValue(String::class.java)
+                        dIdList.add(data.key.toString())
+
+                        Log.d("QuizSelectFragment", "title = $title")
+                        Log.d("QuizSelectFragment", "LikeNum = $likeNum")
+                        Log.d("QuizSelectFragment", "q_id = $q_id")
                         list.add(
-                            Detail(title = item!!.title,
-                                LikeNum = item.LikeNum,
-                                q_id = item.q_id
+                            Detail(
+                                title = title!!,
+                                likeNum = likeNum!!,
+                                q_id = q_id!!
                             )
                         )
 
                         //recyclerviewの更新
                         binding.selectRecyclerView.adapter?.notifyItemInserted(list.size - 1)
-                        Log.d("QuizSelectFragment", "==> $item")
+                        Log.d("QuizSelectFragment", "==> $list")
                     }
                     Log.d("QuizSelectFragment", "Finish onDataChange")
                 }
@@ -142,7 +154,7 @@ class QuizSelectFragment : Fragment() {
                     //データの取得に失敗したとき
                     Log.d("QuizSelectFragment", "ERROR")
                     list.add(
-                        Detail(title = "Not Found", LikeNum = 0, q_id = "not_found")
+                        Detail(title = "Not Found", likeNum = 0, q_id = "not_found")
                     )
                 }
             })

@@ -12,7 +12,6 @@ import com.example.smart_quiz.model.Rank
 import com.example.smart_quiz.model.RankInfo
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -25,6 +24,8 @@ class ResActivity : AppCompatActivity() {
     private val rankList = mutableListOf<Rank>()
     private lateinit var rankRecyclerView: RecyclerView
     private val rankInfoList = mutableListOf<RankInfo>()
+    private lateinit var field_id: String
+    private lateinit var d_id: String
 
 
     private val sampleList: MutableList<Rank> = mutableListOf(
@@ -44,7 +45,23 @@ class ResActivity : AppCompatActivity() {
         binding = ActivityResBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        createRankList()
+        field_id = intent.getStringExtra("fieldId").toString()
+        d_id = intent.getStringExtra("d_Id").toString()
+        Log.d("ResActivity", "field_id = $field_id")
+        Log.d("ResActivity", "d_id = $d_id")
+
+
+
+        createRankList(9)
+        val list = mutableListOf<Int>()
+        for(i in 1..10){
+            list.add(i)
+            if(list.size == 10){
+                list.reverse()
+                Log.d("ResActivity", "$list")
+            }
+        }
+
         val result = intent.getIntegerArrayListExtra("Result")
         for(i in result!!){
             if(i != 0){
@@ -76,7 +93,7 @@ class ResActivity : AppCompatActivity() {
 
         //Rankingを表示
         rankRecyclerView = binding.rvRanking
-        val rankAdapter = RankingAdapter(sampleList)
+        val rankAdapter = RankingAdapter(rankList)
         rankRecyclerView.let {
             it.adapter = rankAdapter
             it.layoutManager = LinearLayoutManager(this@ResActivity)
@@ -91,11 +108,12 @@ class ResActivity : AppCompatActivity() {
 
     }
 
-    private fun createRankList(){
-        val refRank = Firebase.database.getReference("Ranking")
+    private fun createRankList(limit: Int){
+        val refRank = Firebase.database.getReference("Details")
         val refUser = Firebase.database.getReference("users")
 
-        refRank.orderByChild("point").startAt(1.0).limitToLast(10)
+        refRank.child(field_id).child(d_id).child("ranking")
+            .orderByChild("point").startAt(1.0).limitToLast(limit)
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     Log.d("ResActivity", "Start onDataChange")
@@ -117,6 +135,13 @@ class ResActivity : AppCompatActivity() {
                                             point = point!!.toInt()
                                         )
                                     )
+
+                                    //binding.rvRanking.adapter?.notifyItemInserted(rankList.size -1)
+                                    if(rankList.size == limit){
+                                        rankList.reverse()
+                                        Log.d("ResActivity DataChange", "$rankList")
+                                        binding.rvRanking.adapter?.notifyDataSetChanged()
+                                    }
                                     Log.d("ResActivity", "$rankList")
                                 }
 
@@ -124,6 +149,7 @@ class ResActivity : AppCompatActivity() {
                                     Log.d("ResActivity", "ERROR")
                                 }
                             })
+
                     }
                     Log.d("ResActivity", "Finish onDataChange")
                 }
@@ -133,5 +159,8 @@ class ResActivity : AppCompatActivity() {
                 }
             })
     }
+
+
+
 
 }
