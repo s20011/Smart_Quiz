@@ -40,6 +40,7 @@ class ResActivity : AppCompatActivity() {
         Rank(name = "test-user9" , point = 20),
         Rank(name = "test-user10" , point = 10),
     )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityResBinding.inflate(layoutInflater)
