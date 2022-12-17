@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.smart_quiz.R
 import com.example.smart_quiz.databinding.FragmentHomeBinding
+import com.example.smart_quiz.model.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -19,6 +20,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,6 +43,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSingInClient: GoogleSignInClient
+    private lateinit var userInfo: User
 
     private val binding get() = _binding!!
 
@@ -98,6 +104,10 @@ class HomeFragment : Fragment() {
             signOut()
         }
 
+        binding.btCreateAcount.setOnClickListener {
+            createUserInfo()
+        }
+
         return binding.root
     }
 
@@ -127,6 +137,7 @@ class HomeFragment : Fragment() {
                     //サインインに成功したときユーザーの情報をUIに反映
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
+                    readUserInfo()
                     updateUI(user)
                 } else {
                     //サインインに失敗したときメッセージを送る
@@ -157,7 +168,44 @@ class HomeFragment : Fragment() {
         } else {
             binding.txName.text = user.displayName.toString()
             binding.txEmail.text = user.email.toString()
+
+            readUserInfo()
         }
+    }
+
+    //user情報を読み込む
+    private fun readUserInfo() {
+        val refUser = Firebase.database.getReference("users")
+        refUser.child(auth.uid.toString())
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val user = snapshot.getValue(User::class.java)
+                    Log.d("HomeFragment", "UserInfo = $user")
+                    if(user == null){
+                        createUserInfo()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("HomeFragment", "ERROR")
+                }
+            })
+    }
+
+    private fun createUserInfo() {
+        val refUser = Firebase.database.getReference("users")
+        val refScore = Firebase.database.getReference("Score")
+        val newPostRef = refScore.push()
+        val user = auth.currentUser
+        val scoreId =newPostRef.key
+        refUser.child(auth.uid.toString()).setValue(
+            User(
+                name = user!!.displayName.toString(),
+                e_mail = user.email.toString(),
+                s_id = scoreId.toString()
+
+            )
+        )
     }
 
     companion object {
