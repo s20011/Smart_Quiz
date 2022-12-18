@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.smart_quiz.R
 import com.example.smart_quiz.databinding.FragmentHomeBinding
+import com.example.smart_quiz.model.Score
 import com.example.smart_quiz.model.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -197,6 +198,9 @@ class HomeFragment : Fragment() {
         val refScore = Firebase.database.getReference("Score")
         val newPostRef = refScore.push()
         val user = auth.currentUser
+        newPostRef.push().setValue(
+            Score(d_id = "initial", point = 0)
+        )
         val scoreId =newPostRef.key
         refUser.child(auth.uid.toString()).setValue(
             User(

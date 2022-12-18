@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.smart_quiz.databinding.ActivityMainBinding
+import com.example.smart_quiz.model.Score
 import com.example.smart_quiz.model.User
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
@@ -66,6 +67,9 @@ class MainActivity : AppCompatActivity() {
         val refScore = Firebase.database.getReference("Score")
         val newPostRef = refScore.push()
         val user = FirebaseAuth.getInstance().currentUser
+        newPostRef.push().setValue(
+            Score(d_id = "initial", point = 0)
+        )
         val scoreId =newPostRef.key
         refUser.child(user!!.uid.toString()).setValue(
             User(
