@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.smart_quiz.GraphActivity
 import com.example.smart_quiz.R
 import com.example.smart_quiz.databinding.FragmentHomeBinding
 import com.example.smart_quiz.model.Score
@@ -45,6 +46,7 @@ class HomeFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSingInClient: GoogleSignInClient
     private lateinit var userInfo: User
+    private val dataList: MutableList<Score> = mutableListOf()
 
     private val binding get() = _binding!!
 
@@ -109,6 +111,12 @@ class HomeFragment : Fragment() {
             createUserInfo()
         }
 
+        binding.btTest.setOnClickListener {
+            val intent = Intent(context, GraphActivity::class.java)
+            startActivity(intent)
+        }
+
+        //getScore()
         return binding.root
     }
 
@@ -210,6 +218,42 @@ class HomeFragment : Fragment() {
 
             )
         )
+    }
+
+    private fun getScore(){
+        val refUser = Firebase.database.getReference("users")
+        val refScore = Firebase.database.getReference("Score")
+        val uid = auth.currentUser!!.uid.toString()
+
+        refUser.child(uid).addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val scoreId = snapshot.child("s_id").getValue(String::class.java)
+                refScore.child(scoreId!!).addValueEventListener(object: ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for(items in snapshot.children){
+                            val item = items.getValue(Score::class.java)
+                            dataList.add(item!!)
+                            Log.d("HomeFragment", "item = $item")
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+                })
+
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    private fun showDialog(){
+        val graphDialog = GraphDialogFragment.newInstance()
+        graphDialog.show(parentFragmentManager, "GraphDialogFragment")
     }
 
     companion object {

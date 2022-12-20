@@ -10,8 +10,11 @@ import com.example.smart_quiz.adapter.ResAdapter
 import com.example.smart_quiz.databinding.ActivityResBinding
 import com.example.smart_quiz.model.Rank
 import com.example.smart_quiz.model.RankInfo
+import com.example.smart_quiz.model.Score
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -26,6 +29,8 @@ class ResActivity : AppCompatActivity() {
     private val rankInfoList = mutableListOf<RankInfo>()
     private lateinit var field_id: String
     private lateinit var d_id: String
+    private lateinit var auth: FirebaseAuth
+
 
 
     private val sampleList: MutableList<Rank> = mutableListOf(
@@ -49,6 +54,8 @@ class ResActivity : AppCompatActivity() {
         d_id = intent.getStringExtra("d_Id").toString()
         Log.d("ResActivity", "field_id = $field_id")
         Log.d("ResActivity", "d_id = $d_id")
+        auth = FirebaseAuth.getInstance()
+        val user = auth.currentUser
 
 
 
@@ -103,7 +110,8 @@ class ResActivity : AppCompatActivity() {
 
 
         binding.txTotalpoint.text = count.toString()
-
+        recordScore()
+        //updateRank(count)
 
 
     }
@@ -136,12 +144,13 @@ class ResActivity : AppCompatActivity() {
                                         )
                                     )
 
+
                                     //binding.rvRanking.adapter?.notifyItemInserted(rankList.size -1)
                                     if(rankList.size == limit){
                                         rankList.reverse()
                                         Log.d("ResActivity DataChange", "$rankList")
-                                        binding.rvRanking.adapter?.notifyDataSetChanged()
                                     }
+                                    binding.rvRanking.adapter?.notifyDataSetChanged()
                                     Log.d("ResActivity", "$rankList")
                                 }
 
@@ -156,6 +165,62 @@ class ResActivity : AppCompatActivity() {
 
                 override fun onCancelled(error: DatabaseError) {
                     Log.d("ResActivity", "ERROR")
+                }
+            })
+    }
+
+    //Scoreを記録
+    private fun recordScore() {
+        val database = FirebaseDatabase.getInstance()
+        val refUser = database.getReference("users")
+        val uid = auth.currentUser!!.uid.toString()
+
+        refUser.child(uid).addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val scoreId = snapshot.child("s_id").getValue(String::class.java)
+                val refScore = database.getReference("Score/$scoreId")
+                refScore.push().setValue(
+                    Score(d_id = d_id, point = count)
+                )
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("ResActivity", "Not read RealtimeDatabase")
+            }
+        })
+
+
+    }
+
+    //Rankを更新する
+    private fun updateRank(point: Int){
+        Log.d("ResActivity", "start updateRank")
+        val uid = auth.currentUser!!.uid.toString()
+        val database = FirebaseDatabase.getInstance()
+        val refRank = database.getReference("Details")
+
+        refRank.child(field_id).child(d_id).child("ranking")
+            .orderByChild("u_id").startAt(uid).endAt(uid)
+            .addValueEventListener(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val rankInfo = snapshot.child("point").getValue(Int::class.java)
+                    Log.d("ResActivity", "rankPoint => $rankInfo")
+                    val key = snapshot.key.toString()
+                    if(rankInfo == null){
+                        Log.d("ResActivity", "Push RankInfo")
+//                        refRank.push().setValue(
+//                            RankInfo(point = point, u_id = uid)
+//                        )
+                    }else if(point > rankInfo){
+                        val updatePoint = hashMapOf<String, Any>()
+                        updatePoint["point"] = point
+                        Log.d("ResActivity", "Update RankInfo")
+//                        refRank.child(key).updateChildren(updatePoint)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("ResActivity", "Not UpdateRank")
                 }
             })
     }

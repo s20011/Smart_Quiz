@@ -58,6 +58,7 @@ class EditActivity : AppCompatActivity() {
             android.R.layout.simple_spinner_item,
             spinnerItems
         )
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
@@ -80,7 +81,7 @@ class EditActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this@EditActivity)
             builder.setTitle("キャンセル")
                 .setMessage("作成をやめますか")
-                .setPositiveButton("はい") { _, _ ->
+                .setPositiveButton(R.string.cancel) { _, _ ->
                     finish()
                 }
             val alertDialog = builder.create()
