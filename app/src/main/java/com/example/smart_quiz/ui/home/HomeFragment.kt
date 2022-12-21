@@ -3,7 +3,6 @@ package com.example.smart_quiz.ui.home
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.telecom.Call.Details
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.smart_quiz.GraphActivity
 import com.example.smart_quiz.R
 import com.example.smart_quiz.adapter.SelectAdapter
 import com.example.smart_quiz.databinding.FragmentHomeBinding
@@ -35,7 +33,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
@@ -64,11 +61,11 @@ class HomeFragment : Fragment() {
 
     private val binding get() = _binding!!
 
-    private val sampleList = mutableListOf<Detail>(
+    private val sampleList = mutableListOf(
         Detail(title = "記録はありません", likeNum = 0, q_id = "00")
     )
 
-    private val sampleList2 = mutableListOf<Detail>(
+    private val sampleList2 = mutableListOf(
         Detail(title = "animal-test", likeNum = 0, q_id = "02"),
         Detail(title = "history-test", likeNum = 0, q_id = "01"),
         Detail(title = "it-test01", likeNum = 0, q_id = "03")
@@ -105,7 +102,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
@@ -260,7 +257,7 @@ class HomeFragment : Fragment() {
     private fun getScore(){
         val refUser = Firebase.database.getReference("users")
         val refScore = Firebase.database.getReference("Score")
-        val uid = auth.currentUser!!.uid.toString()
+        val uid = auth.currentUser!!.uid
 
         refUser.child(uid).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
