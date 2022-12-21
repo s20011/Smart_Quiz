@@ -29,4 +29,9 @@
     <string name="cancel">Cancel</string>
     <string name="point">point</string>
     <string name="createacount">Create Acount</string>
+    <string name="result">Result</string>
+    <string name="graph">Graph</string>
+    <string name="answer">Answer</string>
+    <string name="record">Record</string>
+    <string name="good">Good</string>
 </resources>

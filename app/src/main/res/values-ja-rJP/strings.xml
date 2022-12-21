@@ -30,4 +30,9 @@
     <string name="cancel">キャンセル</string>
     <string name="point">point</string>
     <string name="createacount">アカウント作成</string>
+    <string name="result">結果</string>
+    <string name="graph">グラフ</string>
+    <string name="answer">解答</string>
+    <string name="record">記録</string>
+    <string name="good">いいね</string>
 </resources>
