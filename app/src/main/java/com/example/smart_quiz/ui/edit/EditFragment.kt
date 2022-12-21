@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.EditActivity
@@ -15,7 +17,10 @@ import com.example.smart_quiz.R
 import com.example.smart_quiz.adapter.SelectAdapter
 import com.example.smart_quiz.databinding.FragmentEditBinding
 import com.example.smart_quiz.model.Detail
+import com.example.smart_quiz.viewmodel.MainViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,6 +39,7 @@ class EditFragment : Fragment() {
     private var _binding: FragmentEditBinding? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var selectAdapter: SelectAdapter
+    private val mainViewModel by activityViewModels<MainViewModel>()
 
     //sample
     private val sampleList: MutableList<Detail> = mutableListOf(
@@ -60,6 +66,13 @@ class EditFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentEditBinding.inflate(inflater, container, false)
 
+        lifecycleScope.launch {
+            mainViewModel.reselectedItemOnRoot
+                .filter { it.isEdit() }
+                .collect {
+                    binding.editSelectRecyclerview.smoothScrollToPosition(0)
+                }
+        }
         recyclerView = binding.editSelectRecyclerview
         selectAdapter = SelectAdapter(sampleList)
         //recyclerviewのクリック処理

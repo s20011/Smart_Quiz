@@ -24,6 +24,12 @@ class GraphActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        val toolbar = binding.graphToolbar
+        setSupportActionBar(toolbar)
+        toolbar.setTitle(R.string.graph)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         maxPoint = 160f
         mChart = binding.chart
 
@@ -41,13 +47,16 @@ class GraphActivity : AppCompatActivity() {
         //Grid背景色
         mChart.setDrawGridBackground(true)
         val xAxis = mChart.xAxis
+        xAxis.isEnabled = false
 
         xAxis.granularity = 1f
         xAxis.valueFormatter = IndexAxisValueFormatter(quarters)
         xAxis.setLabelCount(quarters.size, false)
 
         val marker: SimpleMarkerView = SimpleMarkerView(
-            this@GraphActivity,R.layout.simple_marker_view
+            this@GraphActivity,
+            R.layout.simple_marker_view,
+            quarters
         )
         marker.chartView = mChart
         mChart.marker = marker
@@ -55,7 +64,7 @@ class GraphActivity : AppCompatActivity() {
 
 
         //Grid縦軸を破線
-        xAxis.enableGridDashedLine(10f, 10f, 0f)
+        //xAxis.enableGridDashedLine(10f, 10f, 0f)
         xAxis.position = XAxis.XAxisPosition.BOTTOM
 
         val leftAxis = mChart.axisLeft
@@ -63,7 +72,7 @@ class GraphActivity : AppCompatActivity() {
         leftAxis.axisMaximum = maxPoint
         leftAxis.axisMinimum = 0f
         //Grid横軸を破線
-        leftAxis.enableGridDashedLine(10f, 10f, 0f)
+        //leftAxis.enableGridDashedLine(10f, 10f, 0f)
         leftAxis.setDrawZeroLine(true)
 
         //右側の目盛り
@@ -117,5 +126,10 @@ class GraphActivity : AppCompatActivity() {
         mChart.animateY(2500)
 
         mChart.invalidate()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return super.onSupportNavigateUp()
     }
 }

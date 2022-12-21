@@ -50,6 +50,10 @@ class ResActivity : AppCompatActivity() {
         binding = ActivityResBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val toolbar = binding.resToolbar
+        setSupportActionBar(toolbar)
+        toolbar.setTitle(R.string.result)
+
         field_id = intent.getStringExtra("fieldId").toString()
         d_id = intent.getStringExtra("d_Id").toString()
         Log.d("ResActivity", "field_id = $field_id")

@@ -3,17 +3,25 @@ package com.example.smart_quiz.ui.home
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.telecom.Call.Details
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.GraphActivity
 import com.example.smart_quiz.R
+import com.example.smart_quiz.adapter.SelectAdapter
 import com.example.smart_quiz.databinding.FragmentHomeBinding
+import com.example.smart_quiz.model.Detail
 import com.example.smart_quiz.model.Score
 import com.example.smart_quiz.model.User
+import com.example.smart_quiz.viewmodel.MainViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -27,6 +35,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,9 +58,21 @@ class HomeFragment : Fragment() {
     private lateinit var googleSingInClient: GoogleSignInClient
     private lateinit var userInfo: User
     private val dataList: MutableList<Score> = mutableListOf()
+    private val mainViewModel by activityViewModels<MainViewModel>()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var selectAdapter: SelectAdapter
 
     private val binding get() = _binding!!
 
+    private val sampleList = mutableListOf<Detail>(
+        Detail(title = "記録はありません", likeNum = 0, q_id = "00")
+    )
+
+    private val sampleList2 = mutableListOf<Detail>(
+        Detail(title = "animal-test", likeNum = 0, q_id = "02"),
+        Detail(title = "history-test", likeNum = 0, q_id = "01"),
+        Detail(title = "it-test01", likeNum = 0, q_id = "03")
+    )
     private val signInActivityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -86,6 +109,13 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        lifecycleScope.launch {
+            mainViewModel.reselectedItemOnRoot
+                .filter { it.isHome() }
+                .collect {
+
+                }
+        }
         //Googleサインインを設定する
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -111,10 +141,17 @@ class HomeFragment : Fragment() {
             createUserInfo()
         }
 
-        binding.btTest.setOnClickListener {
-            val intent = Intent(context, GraphActivity::class.java)
-            startActivity(intent)
+        recyclerView = binding.rvRedord
+        selectAdapter = SelectAdapter(sampleList2)
+
+        recyclerView.let{
+            it.adapter = selectAdapter
+            it.layoutManager = LinearLayoutManager(view?.context)
+            it.itemAnimator?.changeDuration = 0
         }
+
+
+
 
         //getScore()
         return binding.root

@@ -7,12 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smart_quiz.R
 import com.example.smart_quiz.adapter.FieldAdapter
 import com.example.smart_quiz.databinding.FragmentQuizFieldBinding
 import com.example.smart_quiz.model.Field
+import com.example.smart_quiz.viewmodel.MainViewModel
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,6 +34,7 @@ class QuizFieldFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var _binding: FragmentQuizFieldBinding? = null
+    private val mainViewModel by activityViewModels<MainViewModel>()
 
     private val binding get() = _binding!!
 
@@ -53,6 +59,13 @@ class QuizFieldFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentQuizFieldBinding.inflate(inflater, container, false)
 
+        lifecycleScope.launch {
+            mainViewModel.reselectedItemOnRoot
+                .filter { it.isQuiz() }
+                .collect {
+                    binding.fieldRecyclerview.smoothScrollToPosition(0)
+                }
+        }
         val recyclerview = binding.fieldRecyclerview
         val adapter = FieldAdapter(fieldList)
         adapter.itemClickListener = object : FieldAdapter.OnItemClickListener {

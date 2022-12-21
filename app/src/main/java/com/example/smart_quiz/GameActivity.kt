@@ -64,10 +64,27 @@ class GameActivity : AppCompatActivity() {
         reader(id)
         //gameStart()
 
+        val toolbar = binding.gameToolbar
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         binding.btNext.setOnClickListener {
             quizCount++
             Alert()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val builder = AlertDialog.Builder(this@GameActivity)
+        builder.setTitle("結果")
+            .setMessage("Gameをやめますか？")
+            .setPositiveButton("やめる") { _, _ ->
+                finish()
+            }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.show()
+        return super.onSupportNavigateUp()
     }
 
     //問題ごとにviewを更新する

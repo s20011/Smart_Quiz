@@ -41,6 +41,10 @@ class EditActivity : AppCompatActivity() {
         binding = ActivityEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val toolbar = binding.editToolbar
+        setSupportActionBar(toolbar)
+        toolbar.setTitle(R.string.nav_edit_title)
+
         fieldList.forEach { spinnerItems.add(it.name) }
 
         //recyclerviewの初期化
