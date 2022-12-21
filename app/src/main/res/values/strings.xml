@@ -34,4 +34,5 @@
     <string name="answer">Answer</string>
     <string name="record">Record</string>
     <string name="good">Good</string>
+    <string name="updaterank">Update Rank</string>
 </resources>

@@ -35,4 +35,5 @@
     <string name="answer">解答</string>
     <string name="record">記録</string>
     <string name="good">いいね</string>
+    <string name="updaterank">ランキング更新</string>
 </resources>
