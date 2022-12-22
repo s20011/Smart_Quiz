@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -71,7 +72,8 @@ class GameActivity : AppCompatActivity() {
 
         binding.btNext.setOnClickListener {
             quizCount++
-            Alert()
+            showResDialog()
+            //Alert()
         }
     }
 
@@ -192,6 +194,88 @@ class GameActivity : AppCompatActivity() {
             alertDialog.setCanceledOnTouchOutside(false)
             alertDialog.show()
         }
+    }
+
+
+    private fun showResDialog(){
+        var corNum = 0
+        val resDialog = ResDialogFragment()
+        val args = Bundle()
+        var btText: String //ボタンのテキスト
+        var message: Int
+        val userSelects = if (userSelect.size == 0){  //userの選択肢
+            "なし"
+        }else {
+            userSelect[0]
+        }
+        val resCorrect = correct[0] //正解の選択肢
+
+
+
+        //正解か不正解
+        for(i in correct){
+            if(i in userSelect){
+                corNum++
+            }
+        }
+
+
+        if(userSelect.size != 0 && corNum == userSelect.size){
+            message = 1
+            result.add(3)
+        }else {
+            message = 0
+            result.add(0)
+        }
+
+        if(quizCount  == QuizList.size){
+            resDialog.dialogClickListener = object : ResDialogFragment.OnDialogClickListener {
+                override fun onDialogClick(view: View?) {
+                    val intent = Intent(this@GameActivity, ResActivity::class.java)
+                    intent.putIntegerArrayListExtra("Result", result)
+                    intent.putExtra("fieldId", field_id)
+                    intent.putExtra("d_Id", dId)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
+            btText = "結果画面"
+            args.let {
+                it.putString("btText", btText)
+                it.putString("resCorrect", resCorrect)
+                it.putInt("message", message)
+                it.putString("userSelect", userSelects)
+            }
+
+            resDialog.let {
+                it.arguments = args
+                it.show(supportFragmentManager, "resDialog Finish")
+            }
+
+        }else {
+            resDialog.dialogClickListener = object : ResDialogFragment.OnDialogClickListener {
+                override fun onDialogClick(view: View?) {
+                    gameStart()
+                }
+            }
+
+            btText = "次へ"
+            args.let {
+                it.putString("btText", btText)
+                it.putString("resCorrect", resCorrect)
+                it.putInt("message", message)
+                it.putString("userSelect", userSelects)
+            }
+
+            resDialog.let{
+                it.arguments = args
+                it.show(supportFragmentManager, "resDialog next")
+            }
+
+        }
+
+
     }
 
     private fun reader(id: String){
