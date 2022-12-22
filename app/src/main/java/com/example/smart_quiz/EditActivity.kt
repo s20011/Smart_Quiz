@@ -12,6 +12,7 @@ import android.widget.Spinner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.adapter.ChoiceAdapter
+import com.example.smart_quiz.adapter.QuizEditAdapter
 import com.example.smart_quiz.databinding.ActivityEditBinding
 import com.example.smart_quiz.model.Detail
 import com.example.smart_quiz.model.Field
@@ -23,9 +24,10 @@ import org.jetbrains.annotations.NotNull
 
 class EditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditBinding
-    private val createQuizList: MutableList<Quiz> = mutableListOf()
+
     private val quizTitleList: MutableList<String> = mutableListOf("何もありません")
     private var initial = false
+    private var quizListInitial = false
     private lateinit var recyclerview: RecyclerView
     private val fieldList: MutableList<Field> = mutableListOf(
         Field(name = "IT", id = "field-it"),
@@ -35,6 +37,14 @@ class EditActivity : AppCompatActivity() {
     private var position: Int? = null //ユーザーが選択したプルダウンメニューのposition
     private var checker = false //ユーザーが項目を記入しているか
     private val spinnerItems = arrayListOf<String>()
+    private val createQuizList: MutableList<Quiz> = mutableListOf(
+        Quiz(
+            choice1 = "initial",
+            choice2 = "initial",
+            choice3 = "initial",
+            sentence = "何もありません"
+        )
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +59,7 @@ class EditActivity : AppCompatActivity() {
 
         //recyclerviewの初期化
         recyclerview = binding.createdRecyclerview
-        val quizAdapter = ChoiceAdapter(quizTitleList)
+        val quizAdapter = QuizEditAdapter(createQuizList)
         recyclerview.let {
             it.layoutManager = LinearLayoutManager(this@EditActivity)
             it.adapter = quizAdapter
@@ -100,7 +110,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     //制作画面のダイアログ表示
-    private fun showDialog() {
+    private fun showDialog(){
         val createDialog = CreateDialogFragment()
         createDialog.dialogClickListener = object : CreateDialogFragment.OnDialogClickListener {
             override fun onDialogClick(view: View?) {
@@ -109,6 +119,11 @@ class EditActivity : AppCompatActivity() {
                 val choice1 = view.findViewById<TextInputEditText>(R.id.ed_choice1)
                 val choice2 = view.findViewById<TextInputEditText>(R.id.ed_choice2)
                 val choice3 = view.findViewById<TextInputEditText>(R.id.ed_choice3)
+
+                if(!quizListInitial){
+                    createQuizList.clear()
+                    quizListInitial = true
+                }
 
                 createQuizList.add(
                     Quiz(
