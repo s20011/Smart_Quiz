@@ -41,7 +41,8 @@ class QuizFieldFragment : Fragment() {
     private val fieldList: MutableList<Field> = mutableListOf(
         Field(name = "IT", id = "field-it"),
         Field(name = "動物", id = "field-animal"),
-        Field(name = "歴史", id = "field-history")
+        Field(name = "歴史", id = "field-history"),
+        Field(name = "スペシャル", id = "field-special")
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

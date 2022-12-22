@@ -124,7 +124,7 @@ class QuizSelectFragment : Fragment() {
         val database = FirebaseDatabase.getInstance().reference
         val list: MutableList<Detail> = mutableListOf()
         database.child("Details").child(field!!)
-            .addValueEventListener(object: ValueEventListener {
+            .addListenerForSingleValueEvent(object: ValueEventListener {
                 override fun onDataChange(datasnapshot: DataSnapshot){
                     for(data in datasnapshot.children){
                         val title = data.child("title").getValue(String::class.java)

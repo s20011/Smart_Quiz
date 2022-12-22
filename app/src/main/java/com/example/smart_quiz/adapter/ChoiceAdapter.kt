@@ -1,5 +1,6 @@
 package com.example.smart_quiz.adapter
 
+import android.app.LauncherActivity.ListItem
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,8 @@ class ChoiceAdapter(private val choices: MutableList<String>)
         inner class ViewHolder(ListItemView: View): RecyclerView.ViewHolder(ListItemView){
             val choice = ListItemView.findViewById<TextView>(R.id.tx_choice)
             val row = ListItemView.findViewById<ConstraintLayout>(R.id.row)
+            val choice_num = ListItemView.findViewById<TextView>(R.id.tx_choice_num)
+
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,6 +33,7 @@ class ChoiceAdapter(private val choices: MutableList<String>)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val choice = choices[position]
         holder.choice.text = choice
+        holder.choice_num.text = "${position + 1}. "
     }
 
     override fun getItemCount() = choices.size
