@@ -117,6 +117,7 @@ class ResActivity : AppCompatActivity() {
 
 
         binding.btUpdateRank.setOnClickListener {
+            Log.d("ResActivity", "reset rank")
             rankList.clear()
             createRankList(9)
         }
@@ -133,13 +134,15 @@ class ResActivity : AppCompatActivity() {
         val refUser = Firebase.database.getReference("users")
 
         refRank.child(field_id).child(d_id).child("ranking")
-            .orderByChild("point").startAt(1.0).limitToLast(limit)
+            .orderByChild("point").startAt(1.0).limitToLast(10)
             .addListenerForSingleValueEvent(object: ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+                override fun onDataChange(dbsnapshot: DataSnapshot) {
                     Log.d("ResActivity", "Start createRankList onDataChange")
-                    Log.d("ResActivity", "${snapshot.children}")
+                    Log.d("ResActivity", "${dbsnapshot.children}")
+                    Log.d("ResActivity", "snapshot item count => ${dbsnapshot.childrenCount.toInt()}")
+                    val counter = dbsnapshot.childrenCount.toInt()
 
-                    for(data in snapshot.children){
+                    for(data in dbsnapshot.children){
                         val userId = data.child("u_id").getValue(String::class.java)
                         Log.d("ResActivity", "userId = ${userId.toString()}")
                         val point = data.child("point").getValue(Int::class.java)
@@ -159,11 +162,15 @@ class ResActivity : AppCompatActivity() {
 
 
                                     //binding.rvRanking.adapter?.notifyItemInserted(rankList.size -1)
-                                    if(rankList.size == limit){
+                                    if(rankList.size == counter){
+                                        rankList.sortWith(
+                                            compareBy<Rank> { it.point }
+                                                .thenBy { it.name }
+                                        )
                                         rankList.reverse()
+                                        binding.rvRanking.adapter?.notifyDataSetChanged()
                                         Log.d("ResActivity DataChange", "$rankList")
                                     }
-                                    binding.rvRanking.adapter?.notifyDataSetChanged()
                                     Log.d("ResActivity", "Rank => $rankList")
                                 }
 
@@ -258,11 +265,6 @@ class ResActivity : AppCompatActivity() {
         newPost.setValue(
             RankInfo(point = point, u_id = uid)
         )
-        val key = newPost.key.toString()
-        refRank.child("ranking").child(key).setPriority(
-            refRank.child("ranking").child(key).child("point")
-        )
-
     }
 
 
