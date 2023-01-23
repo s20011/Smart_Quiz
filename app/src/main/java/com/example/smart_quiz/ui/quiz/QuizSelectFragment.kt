@@ -91,7 +91,6 @@ class QuizSelectFragment : Fragment() {
                 val position = holder.absoluteAdapterPosition
                 val text = holder.title.text
                 val id = details[position].q_id
-                Toast.makeText(context, "TEST $text" + id, Toast.LENGTH_LONG).show()
                 val intent = Intent(context, GameActivity::class.java)
                 intent.putExtra("ID", id)
                 intent.putExtra("field_id", field_id)

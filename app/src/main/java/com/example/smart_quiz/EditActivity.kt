@@ -14,17 +14,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.smart_quiz.adapter.ChoiceAdapter
 import com.example.smart_quiz.adapter.QuizEditAdapter
 import com.example.smart_quiz.databinding.ActivityEditBinding
-import com.example.smart_quiz.model.Detail
-import com.example.smart_quiz.model.Field
-import com.example.smart_quiz.model.Quiz
+import com.example.smart_quiz.model.*
 import com.example.smart_quiz.ui.edit.CreateDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 import org.jetbrains.annotations.NotNull
 
 class EditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditBinding
 
+    private lateinit var auth: FirebaseAuth
     private val quizTitleList: MutableList<String> = mutableListOf("何もありません")
     private var initial = false
     private var quizListInitial = false
@@ -54,6 +57,9 @@ class EditActivity : AppCompatActivity() {
         val toolbar = binding.editToolbar
         setSupportActionBar(toolbar)
         toolbar.setTitle(R.string.nav_edit_title)
+
+        //Firebase Authの初期化
+        auth = Firebase.auth
 
         fieldList.forEach { spinnerItems.add(it.name) }
 
@@ -104,6 +110,8 @@ class EditActivity : AppCompatActivity() {
 
         binding.btCreation.setOnClickListener {
             createQuiz()
+            Snackbar.make(it, "新しくクイズを作成しました", Snackbar.LENGTH_LONG).show()
+            finish()
         }
 
 
@@ -164,18 +172,37 @@ class EditActivity : AppCompatActivity() {
         //RealtimeDatabase -> questionへの書き込み
         createQuizList.forEach { newPostRef.push().setValue(it) }
 
+        val user = auth.currentUser
+
+        //usersのインスタンス参照
+        val refUser = database.getReference("users/${user!!.uid}")
+
+        //新しく作成したquestionのkey取得
         val key = newPostRef.key
+
 
         //Detailを分野別に参照
         val refDetail = database.getReference("Details/${fieldList[position!!].id}")
         //RealtimeDatabase -> Detailへの書き込み
-        refDetail.push().setValue(
-            Detail(
+        val newPostDetails = refDetail.push()
+        //新しく作成したDetailsのkeyを取得
+        val detailsKey = newPostDetails.key.toString()
+        newPostDetails.setValue(
+            CreateDetail(
                 likeNum = 0,
                 q_id = key.toString(),
-                title = binding.edTitle.text.toString()
+                title = binding.edTitle.text.toString(),
+                author = user!!.uid
             )
         )
+
+        refUser.child("make-record").push()
+            .setValue(
+                makeRecord(
+                    d_id = detailsKey,
+                    field = fieldList[position!!].id
+                )
+            )
 
     }
 }

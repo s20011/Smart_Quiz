@@ -72,7 +72,6 @@ class QuizFieldFragment : Fragment() {
         adapter.itemClickListener = object : FieldAdapter.OnItemClickListener {
             override fun onItemClick(holder: FieldAdapter.ViewHolder) {
                 val field_id = fieldList[holder.absoluteAdapterPosition].id
-                Toast.makeText(context, "TEST$field_id", Toast.LENGTH_LONG).show()
                 val bundle = bundleOf("id" to field_id)
 
                 findNavController().navigate(R.id.action_field_to_select, bundle)
