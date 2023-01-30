@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.smart_quiz.ChangeActivity
 import com.example.smart_quiz.EditActivity
 import com.example.smart_quiz.R
 import com.example.smart_quiz.adapter.SelectAdapter
@@ -59,6 +60,7 @@ class EditFragment : Fragment() {
     )
 
     private val detailsList: MutableList<Detail> = mutableListOf()
+    private val recordList: MutableList<makeRecord> = mutableListOf()
 
     private val binding get() = _binding!!
 
@@ -96,9 +98,16 @@ class EditFragment : Fragment() {
         selectAdapter.itemClickListener = object :SelectAdapter.OnItemClickListener{
             override fun onItemClick(holder: SelectAdapter.ViewHolder) {
                 val position = holder.absoluteAdapterPosition
-                Snackbar.make(
-                    requireView(), "onClick position $position", Snackbar.LENGTH_SHORT
-                ).show()
+                val title = detailsList[position].title
+                val q_id = detailsList[position].q_id
+                val field = recordList[position].field
+                val d_id = recordList[position].d_id
+                val intent = Intent(context, ChangeActivity::class.java)
+                intent.putExtra("title", title)
+                intent.putExtra("q_id", q_id)
+                intent.putExtra("field", field)
+                intent.putExtra("d_id", d_id)
+                startActivity(intent)
 
                 Log.d("EditFragment", "onClick")
             }
@@ -131,6 +140,7 @@ class EditFragment : Fragment() {
                     for(data in snapshot.children){
                         val field = data.child("field").getValue(String::class.java)
                         val d_id = data.child("d_id").getValue(String::class.java)
+                        recordList.add(makeRecord(field = field.toString(), d_id = d_id.toString()))
                         refDetail.child(field!!).child(d_id!!)
                             .addListenerForSingleValueEvent(object: ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {

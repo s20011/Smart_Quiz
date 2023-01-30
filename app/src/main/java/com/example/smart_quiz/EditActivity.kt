@@ -120,6 +120,8 @@ class EditActivity : AppCompatActivity() {
     //制作画面のダイアログ表示
     private fun showDialog(){
         val createDialog = CreateDialogFragment()
+        val args = Bundle()
+        args.putBoolean("dis", false)
         createDialog.dialogClickListener = object : CreateDialogFragment.OnDialogClickListener {
             override fun onDialogClick(view: View?) {
                 val question = view!!.findViewById<TextInputEditText>(R.id.ed_question)
