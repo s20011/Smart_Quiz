@@ -213,7 +213,7 @@ class ResActivity : AppCompatActivity() {
                 val scoreId = snapshot.child("s_id").getValue(String::class.java)
                 val refScore = database.getReference("Score/$scoreId")
                 refScore.push().setValue(
-                    Score(d_id = d_id, point = count, Date = formatDate)
+                    Score(d_id = d_id, point = count, date = formatDate)
                 )
             }
 

@@ -3,5 +3,5 @@ package com.example.smart_quiz.model
 data class Score(
     val d_id: String = "",
     val point: Int = 0,
-    val Date: Long = 0
+    val date: Long = 0
 )
