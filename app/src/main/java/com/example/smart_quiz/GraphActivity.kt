@@ -58,6 +58,7 @@ class GraphActivity : AppCompatActivity() {
             R.layout.simple_marker_view,
             quarters
         )
+
         marker.chartView = mChart
         mChart.marker = marker
 
@@ -105,7 +106,7 @@ class GraphActivity : AppCompatActivity() {
 //        }
 
         val dataset = LineDataSet(entries, "# of Calls")
-        val float =
+
         dataset.let {
             it.setColor(Color.BLACK)
             it.setDrawIcons(false)
@@ -124,6 +125,8 @@ class GraphActivity : AppCompatActivity() {
 
         mChart.data = data
         mChart.animateY(2500)
+
+        
 
         mChart.invalidate()
     }

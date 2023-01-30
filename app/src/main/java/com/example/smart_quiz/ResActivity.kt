@@ -11,6 +11,7 @@ import com.example.smart_quiz.databinding.ActivityResBinding
 import com.example.smart_quiz.model.Rank
 import com.example.smart_quiz.model.RankInfo
 import com.example.smart_quiz.model.Score
+import com.example.smart_quiz.model.makeRecord
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,6 +19,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class ResActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResBinding
@@ -197,18 +201,41 @@ class ResActivity : AppCompatActivity() {
         val refUser = database.getReference("users")
         val uid = auth.currentUser!!.uid.toString()
 
+        val formatter = DateTimeFormatter.ofPattern("YYYYMMdd")
+        val date = ZonedDateTime.now()
+        val formatDate = date.format(formatter).toLong()
+        Log.d("ResActivity", "now Date $formatDate")
+
+
         refUser.child(uid).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.d("ResActivity", "Start recordScore onDataChange")
                 val scoreId = snapshot.child("s_id").getValue(String::class.java)
                 val refScore = database.getReference("Score/$scoreId")
                 refScore.push().setValue(
-                    Score(d_id = d_id, point = count)
+                    Score(d_id = d_id, point = count, Date = formatDate)
                 )
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.d("ResActivity", "Not read RealtimeDatabase")
+            }
+        })
+
+        refUser.child(uid).child("record").orderByChild("d_id").startAt(d_id).endAt(d_id)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var record: makeRecord? = null
+                Log.d("ResActivity", "record読み込み")
+                snapshot.children.forEach {record = it!!.getValue(makeRecord::class.java)}
+                if(record?.d_id == null){
+                    Log.d("ResActivity", "record = $record")
+                    pushRecord(d_id, field_id)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
             }
         })
 
@@ -265,6 +292,16 @@ class ResActivity : AppCompatActivity() {
         val newPost = refRank.child("ranking").push()
         newPost.setValue(
             RankInfo(point = point, u_id = uid)
+        )
+    }
+
+    private fun pushRecord(dId: String, field: String){
+        val database = FirebaseDatabase.getInstance()
+        val uid = auth.currentUser!!.uid
+        val refUser = database.getReference("users/$uid")
+
+        refUser.child("record").push().setValue(
+            makeRecord(d_id = dId, field = field)
         )
     }
 

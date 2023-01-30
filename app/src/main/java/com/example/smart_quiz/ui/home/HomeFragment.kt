@@ -2,6 +2,7 @@ package com.example.smart_quiz.ui.home
 
 import android.app.Activity
 import android.content.Intent
+import android.icu.text.AlphabeticIndex.Record
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,10 +14,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.smart_quiz.GraphActivity
 import com.example.smart_quiz.R
+import com.example.smart_quiz.adapter.RecordAdapter
 import com.example.smart_quiz.adapter.SelectAdapter
 import com.example.smart_quiz.databinding.FragmentHomeBinding
 import com.example.smart_quiz.model.Detail
+import com.example.smart_quiz.model.RecordQuiz
 import com.example.smart_quiz.model.Score
 import com.example.smart_quiz.model.User
 import com.example.smart_quiz.viewmodel.MainViewModel
@@ -57,7 +61,7 @@ class HomeFragment : Fragment() {
     private val dataList: MutableList<Score> = mutableListOf()
     private val mainViewModel by activityViewModels<MainViewModel>()
     private lateinit var recyclerView: RecyclerView
-    private lateinit var selectAdapter: SelectAdapter
+    private lateinit var recordAdapter: RecordAdapter
 
     private val binding get() = _binding!!
 
@@ -70,6 +74,10 @@ class HomeFragment : Fragment() {
         Detail(title = "history-test", likeNum = 0, q_id = "01"),
         Detail(title = "it-test01", likeNum = 0, q_id = "03")
     )
+
+    private val recordList = mutableListOf<RecordQuiz>()
+
+
     private val signInActivityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -123,6 +131,7 @@ class HomeFragment : Fragment() {
         //Firebase Authの初期化
         auth = Firebase.auth
 
+        createRecordList()
         binding.btSignin.setOnClickListener {
             //サインインボタンが押されたときサインインする
             Log.d("GoogleSignInActivity", "START =======")
@@ -139,10 +148,22 @@ class HomeFragment : Fragment() {
         }
 
         recyclerView = binding.rvRedord
-        selectAdapter = SelectAdapter(sampleList2)
+        recordAdapter = RecordAdapter(recordList)
+        //クリック処理
+        recordAdapter.itemClickListener = object : RecordAdapter.OnItemClickListener {
+            override fun onItemClick(holder: RecordAdapter.ViewHolder) {
+                val position = holder.absoluteAdapterPosition
+                val dId = recordList[position].d_id
+                val intent = Intent(context, GraphActivity::class.java)
+                intent.putExtra("dId", dId)
+                startActivity(intent)
+
+            }
+        }
+
 
         recyclerView.let{
-            it.adapter = selectAdapter
+            it.adapter = recordAdapter
             it.layoutManager = LinearLayoutManager(view?.context)
             it.itemAnimator?.changeDuration = 0
         }
@@ -288,6 +309,56 @@ class HomeFragment : Fragment() {
     private fun showDialog(){
         val graphDialog = GraphDialogFragment.newInstance()
         graphDialog.show(parentFragmentManager, "GraphDialogFragment")
+    }
+
+    private fun createRecordList(){
+        val uid = auth.currentUser!!.uid
+        val refUser = Firebase.database.getReference("users/$uid")
+        val refDetail = Firebase.database.getReference("Details")
+
+        refUser.child("record")
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for(data in snapshot.children){
+                        val dId = data.child("d_id")
+                            .getValue(String::class.java).toString()
+                        val field = data.child("field")
+                            .getValue(String::class.java).toString()
+
+                        Log.d("HomeFragment", "field => $field")
+                        Log.d("HomeFragment", "d_id -> $dId")
+                        refDetail.child(field).child(dId)
+                            .addListenerForSingleValueEvent(object: ValueEventListener{
+                                override fun onDataChange(dsnapshot: DataSnapshot) {
+                                    val title = dsnapshot.child("title")
+                                        .getValue(String::class.java).toString()
+                                    Log.d("HomeFragment", "title => $title")
+
+                                    recordList.add(
+                                        RecordQuiz(
+                                            title = title, d_id = dId
+                                        )
+                                    )
+                                    if(recordList.size == snapshot.childrenCount.toInt()){
+                                        binding.rvRedord.adapter?.notifyDataSetChanged()
+                                    }
+
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+
+                                }
+                            })
+
+
+
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+        })
     }
 
     companion object {

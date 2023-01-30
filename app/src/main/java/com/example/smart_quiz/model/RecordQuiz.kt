@@ -1,7 +1,6 @@
 package com.example.smart_quiz.model
 
-data class Score(
+data class RecordQuiz(
     val d_id: String = "",
-    val point: Int = 0,
-    val Date: Long = 0
+    val title: String = ""
 )
