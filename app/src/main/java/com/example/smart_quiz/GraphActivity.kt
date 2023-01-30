@@ -18,11 +18,14 @@ class GraphActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGraphBinding
     private lateinit var mChart: LineChart
     private var maxPoint: Float = 0f
+    private lateinit var dId: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGraphBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        dId = intent.getStringExtra("dId").toString()
 
         val toolbar = binding.graphToolbar
         setSupportActionBar(toolbar)
