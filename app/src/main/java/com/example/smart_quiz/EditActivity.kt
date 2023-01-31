@@ -66,6 +66,12 @@ class EditActivity : AppCompatActivity() {
         //recyclerviewの初期化
         recyclerview = binding.createdRecyclerview
         val quizAdapter = QuizEditAdapter(createQuizList)
+        quizAdapter.itemClickListener = object : QuizEditAdapter.OnItemClickListener {
+            override fun onItemClick(holder: QuizEditAdapter.ViewHolder) {
+                val position = holder.absoluteAdapterPosition
+                reShowDialog(createQuizList[position], position)
+            }
+        }
         recyclerview.let {
             it.layoutManager = LinearLayoutManager(this@EditActivity)
             it.adapter = quizAdapter
@@ -161,6 +167,39 @@ class EditActivity : AppCompatActivity() {
 
         createDialog.show(supportFragmentManager, "create_dialog")
 
+    }
+
+    private fun reShowDialog(item: Quiz, position: Int) {
+        val createDialog = CreateDialogFragment()
+        val args = Bundle()
+        args.putBoolean("dis", true)
+        args.let {
+            it.putString("choice1", item.choice1)
+            it.putString("choice2", item.choice2)
+            it.putString("choice3", item.choice3)
+            it.putString("correct", item.correct)
+            it.putString("sentence", item.sentence)
+        }
+        createDialog.arguments = args
+        createDialog.dialogClickListener = object : CreateDialogFragment.OnDialogClickListener {
+            override fun onDialogClick(view: View?) {
+                val question = view!!.findViewById<TextInputEditText>(R.id.ed_question)
+                val correct = view.findViewById<TextInputEditText>(R.id.ed_correct)
+                val choice1 = view.findViewById<TextInputEditText>(R.id.ed_choice1)
+                val choice2 = view.findViewById<TextInputEditText>(R.id.ed_choice2)
+                val choice3 = view.findViewById<TextInputEditText>(R.id.ed_choice3)
+
+                createQuizList[position] = Quiz(
+                    sentence = question.text.toString(),
+                    choice1 = choice1.text.toString(),
+                    choice2 = choice2.text.toString(),
+                    choice3 = choice3.text.toString(),
+                    correct = correct.text.toString()
+                )
+                recyclerview.adapter?.notifyDataSetChanged()
+            }
+        }
+        createDialog.show(supportFragmentManager, "create_dialog")
     }
 
     //RealtimeDatabaseへの書き込み
