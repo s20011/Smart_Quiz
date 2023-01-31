@@ -7,12 +7,12 @@ import android.util.Log
 import com.example.smart_quiz.databinding.ActivityGraphBinding
 import com.example.smart_quiz.model.Score
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.AxisBase
+//import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.ValueFormatter
+//import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -99,11 +99,11 @@ class GraphActivity : AppCompatActivity() {
         maxPoint = 160f
         mChart = binding.chart
 
-        val formatter = object: ValueFormatter() {
-            override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-                return dateList[value.toInt()]
-            }
-        }
+//        val formatter = object: ValueFormatter() {
+//            override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+//                return dateList[value.toInt()]
+//            }
+//        }
 
         //Grid背景色
         mChart.setDrawGridBackground(true)
@@ -114,7 +114,7 @@ class GraphActivity : AppCompatActivity() {
         xAxis.valueFormatter = IndexAxisValueFormatter(dateList)
         xAxis.setLabelCount(dateList.size, false)
 
-        val marker: SimpleMarkerView = SimpleMarkerView(
+        val marker = SimpleMarkerView(
             this@GraphActivity,
             R.layout.simple_marker_view,
             dateList
