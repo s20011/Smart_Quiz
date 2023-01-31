@@ -13,11 +13,9 @@ import com.example.smart_quiz.model.RankInfo
 import com.example.smart_quiz.model.Score
 import com.example.smart_quiz.model.makeRecord
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
@@ -125,6 +123,10 @@ class ResActivity : AppCompatActivity() {
             Log.d("ResActivity", "reset rank")
             rankList.clear()
             createRankList(9)
+        }
+
+        binding.btGood.setOnClickListener {
+            onGoodClicked()
         }
 
         binding.txTotalpoint.text = count.toString()
@@ -303,6 +305,34 @@ class ResActivity : AppCompatActivity() {
         refUser.child("record").push().setValue(
             makeRecord(d_id = dId, field = field)
         )
+    }
+
+    private fun onGoodClicked() {
+        Log.d("ResActivity", "Start onGoodClicked")
+        val refDetail = Firebase.database.getReference("Details/$field_id/$d_id/likeNum")
+        refDetail.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                var good = currentData.getValue(Long::class.java)
+                    ?: return Transaction.success(currentData)
+
+                good += 1
+                Log.d("ResActivity", "likeNum == $good")
+                currentData.value = good
+                return Transaction.success(currentData)
+            }
+
+            override fun onComplete(
+                error: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+                Log.d("ResActivity", "postTransaction:onComplete" + error)
+                Log.d(
+                    "ResActivity",
+                    "lkeNum == ${currentData!!.getValue(Long::class.java)}"
+                )
+            }
+        })
     }
 
 
