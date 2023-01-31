@@ -37,4 +37,6 @@
     <string name="good">いいね</string>
     <string name="updaterank">ランキング更新</string>
     <string name="userselect">選択した答え</string>
+    <string name="addquestion">追加する問題</string>
+    <string name="modification">変更</string>
 </resources>
